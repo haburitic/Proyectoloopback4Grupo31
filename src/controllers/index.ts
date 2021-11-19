@@ -4,3 +4,4 @@ export * from './prueba.controller';
 export * from './empleado.controller';
 export * from './jugadores.controller';
 export * from './user.controller';
+export * from './user-credentials-user.controller';

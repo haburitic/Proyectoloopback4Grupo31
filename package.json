@@ -57,6 +57,7 @@
     "@loopback/rest": "^10.1.0",
     "@loopback/rest-explorer": "^3.3.4",
     "@loopback/service-proxy": "^3.2.4",
+    "isemail": "^3.2.0",
     "loopback-connector-mongodb": "^5.6.0",
     "loopback-connector-rest": "^3.7.0",
     "loopback-connector-twilio": "^1.0.0",

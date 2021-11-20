@@ -10,7 +10,8 @@ import {PasswordHasher} from './hash-password.service';
 
 export class MyUserService implements UserService<User, Credentials> {
   constructor(
-    @repository(UserRepository) public userRepository: UserRepository,
+    @repository(UserRepository)
+    public userRepository: UserRepository,
     @inject(PasswordHasherBindings.PASSWORD_HASHER)
     public passwordHasher: PasswordHasher,
   ) {
@@ -23,6 +24,22 @@ export class MyUserService implements UserService<User, Credentials> {
       where: {email: credentials.email},
     });
     if (!foundUser) {
+      throw new HttpErrors.Unauthorized(invalidCredentialsError);
+    }
+
+    const credentialsFound = await this.userRepository.findCredentials(
+      foundUser.id,
+    );
+    if (!credentialsFound) {
+      throw new HttpErrors.Unauthorized(invalidCredentialsError);
+    }
+
+    const passwordMatched = await this.passwordHasher.comparePassword(
+      credentials.password,
+      credentialsFound.password,
+    );
+
+    if (!passwordMatched) {
       throw new HttpErrors.Unauthorized(invalidCredentialsError);
     }
 

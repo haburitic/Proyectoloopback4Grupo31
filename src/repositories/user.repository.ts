@@ -1,7 +1,8 @@
-import {inject} from '@loopback/core';
-import {DefaultCrudRepository} from '@loopback/repository';
+import {Getter, inject} from '@loopback/core';
+import {DefaultCrudRepository, HasOneRepositoryFactory, repository} from '@loopback/repository';
 import {MongoDataSource} from '../datasources';
-import {User, UserRelations} from '../models';
+import {User, UserCredentials, UserRelations} from '../models';
+import {UserCredentialsRepository} from './user-credentials.repository';
 
 export type Credentials = {
   email: string;
@@ -14,10 +15,29 @@ export class UserRepository extends DefaultCrudRepository<
   typeof User.prototype.id,
   UserRelations
 > {
+
+  public readonly userCredentials: HasOneRepositoryFactory<UserCredentials, typeof User.prototype.id>;
+
   constructor(
-    @inject('datasources.mongo')
-    dataSource: MongoDataSource,
+    @inject('datasources.mongo') dataSource: MongoDataSource,
+    @repository.getter('UserCredentialsRepository')
+    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>,
   ) {
     super(User, dataSource);
+    this.userCredentials = this.createHasOneRepositoryFactoryFor('userCredentials', userCredentialsRepositoryGetter);
+    this.registerInclusionResolver('userCredentials', this.userCredentials.inclusionResolver);
+  }
+
+  async findCredentials(
+    userId: typeof User.prototype.id,
+  ): Promise<UserCredentials | undefined> {
+    try {
+      return await this.userCredentials(userId).get();
+    } catch (err) {
+      if (err.code === 'ENTITY_NOT_FOUND') {
+        return undefined;
+      }
+      throw err;
+    }
   }
 }

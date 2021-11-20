@@ -3,7 +3,7 @@ import {
   CountSchema,
   Filter,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
   del,
@@ -13,11 +13,10 @@ import {
   param,
   patch,
   post,
-  requestBody,
+  requestBody
 } from '@loopback/rest';
 import {
-  UserCredentials,
-  User,
+  User, UserCredentials
 } from '../models';
 import {UserCredentialsRepository} from '../repositories';
 
@@ -60,8 +59,7 @@ export class UserCredentialsUserController {
         'application/json': {
           schema: getModelSchemaRef(User, {
             title: 'NewUserInUserCredentials',
-            exclude: ['id'],
-            optional: ['userCredentialsId']
+            exclude: ['id']
           }),
         },
       },

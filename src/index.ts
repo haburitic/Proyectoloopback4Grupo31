@@ -1,4 +1,5 @@
-import {ApplicationConfig, Generador31Application} from './application';
+import {ApplicationConfig} from '@loopback/core';
+import {Generador31Application} from './application';
 
 export * from './application';
 

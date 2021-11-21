@@ -16,22 +16,23 @@ import {
   requestBody
 } from '@loopback/rest';
 import {
-  User, UserCredentials
+  User,
+  UserCredentials
 } from '../models';
-import {UserCredentialsRepository} from '../repositories';
+import {UserRepository} from '../repositories';
 
-export class UserCredentialsUserController {
+export class UserUserCredentialsController {
   constructor(
-    @repository(UserCredentialsRepository) protected userCredentialsRepository: UserCredentialsRepository,
+    @repository(UserRepository) protected userRepository: UserRepository,
   ) { }
 
-  @get('/user-credentials/{id}/user', {
+  @get('/users/{id}/user-credentials', {
     responses: {
       '200': {
-        description: 'UserCredentials has one User',
+        description: 'User has one UserCredentials',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(User),
+            schema: getModelSchemaRef(UserCredentials),
           },
         },
       },
@@ -39,39 +40,40 @@ export class UserCredentialsUserController {
   })
   async get(
     @param.path.string('id') id: string,
-    @param.query.object('filter') filter?: Filter<User>,
-  ): Promise<User> {
-    return this.userCredentialsRepository.user(id).get(filter);
+    @param.query.object('filter') filter?: Filter<UserCredentials>,
+  ): Promise<UserCredentials> {
+    return this.userRepository.userCredentials(id).get(filter);
   }
 
-  @post('/user-credentials/{id}/user', {
+  @post('/users/{id}/user-credentials', {
     responses: {
       '200': {
-        description: 'UserCredentials model instance',
-        content: {'application/json': {schema: getModelSchemaRef(User)}},
+        description: 'User model instance',
+        content: {'application/json': {schema: getModelSchemaRef(UserCredentials)}},
       },
     },
   })
   async create(
-    @param.path.string('id') id: typeof UserCredentials.prototype.id,
+    @param.path.string('id') id: typeof User.prototype.id,
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(User, {
-            title: 'NewUserInUserCredentials',
-            exclude: ['id']
+          schema: getModelSchemaRef(UserCredentials, {
+            title: 'NewUserCredentialsInUser',
+            exclude: ['id'],
+            optional: ['userId']
           }),
         },
       },
-    }) user: Omit<User, 'id'>,
-  ): Promise<User> {
-    return this.userCredentialsRepository.user(id).create(user);
+    }) userCredentials: Omit<UserCredentials, 'id'>,
+  ): Promise<UserCredentials> {
+    return this.userRepository.userCredentials(id).create(userCredentials);
   }
 
-  @patch('/user-credentials/{id}/user', {
+  @patch('/users/{id}/user-credentials', {
     responses: {
       '200': {
-        description: 'UserCredentials.User PATCH success count',
+        description: 'User.UserCredentials PATCH success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
@@ -81,28 +83,28 @@ export class UserCredentialsUserController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(User, {partial: true}),
+          schema: getModelSchemaRef(UserCredentials, {partial: true}),
         },
       },
     })
-    user: Partial<User>,
-    @param.query.object('where', getWhereSchemaFor(User)) where?: Where<User>,
+    userCredentials: Partial<UserCredentials>,
+    @param.query.object('where', getWhereSchemaFor(UserCredentials)) where?: Where<UserCredentials>,
   ): Promise<Count> {
-    return this.userCredentialsRepository.user(id).patch(user, where);
+    return this.userRepository.userCredentials(id).patch(userCredentials, where);
   }
 
-  @del('/user-credentials/{id}/user', {
+  @del('/users/{id}/user-credentials', {
     responses: {
       '200': {
-        description: 'UserCredentials.User DELETE success count',
+        description: 'User.UserCredentials DELETE success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(User)) where?: Where<User>,
+    @param.query.object('where', getWhereSchemaFor(UserCredentials)) where?: Where<UserCredentials>,
   ): Promise<Count> {
-    return this.userCredentialsRepository.user(id).delete(where);
+    return this.userRepository.userCredentials(id).delete(where);
   }
 }
